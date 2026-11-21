@@ -39,15 +39,27 @@
       <p id="confirmation" class="confirmation" role="status" hidden></p>
     </section>
 
-    <!-- PBI-03: the student's own questions -->
-    <section class="card" aria-labelledby="mine-heading">
-      <h2 id="mine-heading">My questions</h2>
-      <p id="mine-empty" class="hint">You have not asked any questions yet.</p>
-      <ul id="mine-list" class="question-list"></ul>
+    <!-- PBI-04: shared class feed -->
+    <section class="card" aria-labelledby="feed-heading">
+      <div class="section-head">
+        <h2 id="feed-heading">Class questions <span id="feed-count" class="count-pill"></span></h2>
+        <div class="toolbar">
+          <label for="sort-select">Sort by</label>
+          <select id="sort-select">
+            <option value="top">Top (most votes)</option>
+            <option value="newest">Newest</option>
+          </select>
+        </div>
+      </div>
+      <!-- PBI-06: status legend -->
+      <div id="legend"></div>
+      <p id="feed-empty" class="hint" hidden>No questions yet. Be the first to ask!</p>
+      <ul id="feed-list" class="question-list"></ul>
     </section>
   </main>
 
   <script src="js/store.js"></script>
+  <script src="js/ui.js"></script>
   <script src="js/seminar.js"></script>
 </body>
 </html>

@@ -230,31 +230,255 @@ textarea:focus-visible {
   font-weight: 600;
 }
 
-/* PBI-03: my questions */
+[hidden] {
+  display: none !important;
+}
+
+/* ===================== Sprint 2: feed, cards, statuses, dashboard ===================== */
+
+/* Section header with a toolbar on the right */
+.section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  margin-bottom: 12px;
+}
+
+.section-head h1,
+.section-head h2 {
+  margin: 0;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.toolbar label {
+  margin: 0;
+}
+
+select {
+  font: inherit;
+  padding: 6px 10px;
+  border: 1px solid #8a96a8;
+  border-radius: 6px;
+  background: #fff;
+  color: var(--text);
+}
+
+select:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.count-pill {
+  display: inline-block;
+  min-width: 1.8em;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: #e2e8f0;
+  color: var(--text);
+  font-size: 0.95rem;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.btn-secondary {
+  background: #fff;
+  color: var(--navy);
+  border-color: var(--navy);
+}
+
+.btn-secondary:hover {
+  background: #e8eef6;
+}
+
+/* PBI-06: status labels – colour + icon + word */
+.status-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.status-submitted {
+  background: #e8eef6;
+  color: #1f4b7a;
+}
+
+.status-seen {
+  background: #fff4d6;
+  color: #7a4f00;
+}
+
+.status-answered {
+  background: var(--success-bg);
+  color: var(--success-text);
+}
+
+.legend {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  background: var(--bg);
+  border-radius: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-text {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+/* PBI-04: shared question card */
 .question-list {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.question-item {
+.question-card {
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 8px;
   padding: 12px 14px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
+  background: #fff;
+}
+
+.card-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.tag {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.tag-new {
+  background: var(--gold);
+  color: #1a1f2b;
+}
+
+.tag-yours {
+  background: var(--navy);
+  color: #fff;
 }
 
 .question-text {
   margin: 0 0 4px;
+  font-size: 1.05rem;
   overflow-wrap: anywhere;
 }
 
 .question-meta {
-  margin: 0;
+  margin: 0 0 10px;
   color: var(--muted);
   font-size: 0.95rem;
 }
 
-[hidden] {
-  display: none !important;
+.card-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+
+.card-bottom .hint {
+  margin: 0;
+}
+
+/* PBI-05: upvote */
+.vote-btn {
+  font: inherit;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 2px solid var(--navy);
+  background: #fff;
+  color: var(--navy);
+  cursor: pointer;
+}
+
+.vote-btn:hover {
+  background: #e8eef6;
+}
+
+.vote-btn[aria-pressed="true"] {
+  background: var(--navy);
+  color: #fff;
+}
+
+.vote-btn:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.vote-count {
+  font-weight: 400;
+}
+
+.vote-total {
+  font-weight: 700;
+  color: var(--navy);
+}
+
+/* PBI-07: dashboard counts */
+.stats {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+}
+
+.stat {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.stat-number {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1;
+}
+
+.stat-label {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+/* Programmatic focus target (dashboard title) */
+h1[tabindex="-1"]:focus {
+  outline: none;
 }
