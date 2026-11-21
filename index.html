@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Join a seminar – JCU Seminar Q&amp;A</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <p class="brand">JCU Seminar Q&amp;A</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card narrow">
+      <h1>Join a seminar</h1>
+      <p class="hint">Enter the class code your lecturer shows on screen.</p>
+
+      <!-- PBI-01 + PBI-02: join form -->
+      <form id="join-form" novalidate>
+        <div class="field">
+          <label for="class-code">Class code</label>
+          <input id="class-code" name="classCode" type="text" autocomplete="off"
+                 autocapitalize="characters" spellcheck="false" maxlength="12"
+                 aria-describedby="code-error">
+          <p id="code-error" class="error-text" role="alert"></p>
+        </div>
+
+        <fieldset class="field">
+          <legend>How do you want to appear?</legend>
+          <label class="choice">
+            <input type="radio" name="mode" value="named" checked>
+            Named – your name is shown with your questions
+          </label>
+          <label class="choice">
+            <input type="radio" name="mode" value="anonymous">
+            Anonymous – your name is not shown or saved
+          </label>
+        </fieldset>
+
+        <div class="field" id="name-field">
+          <label for="student-name">Your name</label>
+          <input id="student-name" name="studentName" type="text" autocomplete="name"
+                 maxlength="40" aria-describedby="name-error">
+          <p id="name-error" class="error-text" role="alert"></p>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Join seminar</button>
+      </form>
+
+      <p class="hint small">Demo codes: <strong>CP3405</strong> or <strong>CP2408</strong></p>
+    </section>
+  </main>
+
+  <script src="js/store.js"></script>
+  <script src="js/join.js"></script>
+</body>
+</html>

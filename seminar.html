@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Seminar – JCU Seminar Q&amp;A</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-row">
+      <p class="brand">JCU Seminar Q&amp;A</p>
+      <a class="header-link" href="index.html" id="leave-link">Leave seminar</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h1 id="seminar-title">Seminar</h1>
+      <!-- PBI-02: current identity is always visible -->
+      <p class="identity">
+        You are posting as: <span id="identity-badge" class="badge"></span>
+      </p>
+    </section>
+
+    <!-- PBI-03: ask a question -->
+    <section class="card" aria-labelledby="ask-heading">
+      <h2 id="ask-heading">Ask a question</h2>
+      <form id="ask-form" novalidate>
+        <div class="field">
+          <label for="question-text">Your question</label>
+          <textarea id="question-text" name="question" rows="4" maxlength="300"
+                    aria-describedby="char-count question-error"></textarea>
+          <p id="char-count" class="hint small">0 / 300 characters</p>
+          <p id="question-error" class="error-text" role="alert"></p>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit question</button>
+      </form>
+      <p id="confirmation" class="confirmation" role="status" hidden></p>
+    </section>
+
+    <!-- PBI-03: the student's own questions -->
+    <section class="card" aria-labelledby="mine-heading">
+      <h2 id="mine-heading">My questions</h2>
+      <p id="mine-empty" class="hint">You have not asked any questions yet.</p>
+      <ul id="mine-list" class="question-list"></ul>
+    </section>
+  </main>
+
+  <script src="js/store.js"></script>
+  <script src="js/seminar.js"></script>
+</body>
+</html>
