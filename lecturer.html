@@ -42,25 +42,36 @@
         <ul class="stats" id="stats" aria-label="Question counts"></ul>
       </section>
 
+      <!-- Sprint 3: result of the last lecturer action -->
+      <p id="action-status" class="action-status" role="status"></p>
+
+      <!-- PBI-08: possible duplicates (simple word matching, not AI) -->
+      <section class="card" aria-labelledby="dup-heading">
+        <h2 id="dup-heading" tabindex="-1">Possible duplicates <span id="dup-count" class="count-pill"></span></h2>
+        <p class="hint small">Found by simple word matching: common words such as "how" or "should"
+          are ignored and the remaining words are compared. This is <strong>not AI</strong> –
+          you decide whether to merge or keep both.</p>
+        <p id="dup-empty" class="hint" hidden>No possible duplicates right now.</p>
+        <ul id="dup-list" class="dup-list"></ul>
+      </section>
+
       <section class="card" aria-labelledby="questions-heading">
         <div class="section-head">
-          <h2 id="questions-heading">Questions <span id="list-count" class="count-pill"></span></h2>
+          <h2 id="questions-heading" tabindex="-1">Questions <span id="list-count" class="count-pill"></span></h2>
           <div class="toolbar">
-            <label for="filter-select">Status</label>
+            <label for="filter-select">Show</label>
             <select id="filter-select">
-              <option value="all">All statuses</option>
+              <option value="all">All open questions</option>
               <option value="submitted">Submitted</option>
               <option value="seen">Seen</option>
               <option value="answered">Answered</option>
-            </select>
-            <label for="lecturer-sort">Sort by</label>
-            <select id="lecturer-sort">
-              <option value="votes">Most votes</option>
-              <option value="newest">Newest</option>
+              <option value="hidden">Hidden / merged</option>
             </select>
           </div>
         </div>
-        <div id="legend"></div>
+        <!-- PBI-07: fixed priority order instead of a sort control (Sprint 2 retrospective) -->
+        <p class="hint small">Order: Submitted first, then Seen, then Answered at the bottom.
+          Most votes first within each status.</p>
         <p id="list-empty" class="hint" hidden>No questions match this filter.</p>
         <ul id="question-list" class="question-list"></ul>
       </section>
@@ -69,6 +80,7 @@
 
   <script src="js/store.js"></script>
   <script src="js/ui.js"></script>
+  <script src="js/duplicates.js"></script>
   <script src="js/lecturer.js"></script>
 </body>
 </html>

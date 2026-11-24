@@ -71,12 +71,14 @@ var UI = (function () {
   //   viewerId – the student id of this tab (null on the lecturer page)
   //   isNew    – true if the question arrived after the page was loaded
   //   onVote   – function(question); when given, a vote button is shown (student page)
+  //   updated  – true to highlight a card whose status just changed (Sprint 3)
+  //   note     – extra explanation shown on the card, e.g. why it was merged (Sprint 3)
   function createQuestionCard(question, options) {
     options = options || {};
     var isOwn = !!options.viewerId && question.studentId === options.viewerId;
     var votes = Store.voteCount(question);
 
-    var card = el("li", "question-card");
+    var card = el("li", "question-card" + (options.updated ? " card-updated" : ""));
     card.setAttribute("data-id", question.id);
 
     // Top row: status + tags
@@ -88,11 +90,33 @@ var UI = (function () {
     if (isOwn) {
       top.appendChild(el("span", "tag tag-yours", "Yours"));
     }
+    // Sprint 2 retrospective: make status changes clearer (word, not only colour).
+    if (options.updated) {
+      top.appendChild(el("span", "tag tag-updated", "Updated"));
+    }
+    // PBI-08: moderation tags.
+    if (question.mergedInto) {
+      top.appendChild(el("span", "tag tag-removed", "Merged"));
+    } else if (question.hidden) {
+      top.appendChild(el("span", "tag tag-removed", "Hidden"));
+    }
     card.appendChild(top);
 
-    card.appendChild(el("p", "question-text", question.text));
+    var textNode = el("p", "question-text", question.text);
+    textNode.id = "qtext-" + question.id; // lets buttons refer to the question (aria-describedby)
+    card.appendChild(textNode);
     card.appendChild(el("p", "question-meta",
       "Asked by " + authorText(question) + " · " + formatTime(question.createdAt)));
+
+    // PBI-08: a kept question shows how many duplicates were merged into it.
+    var merged = question.mergedFrom ? question.mergedFrom.length : 0;
+    if (merged > 0) {
+      card.appendChild(el("p", "question-meta",
+        "Combined with " + merged + (merged === 1 ? " similar question" : " similar questions")));
+    }
+    if (options.note) {
+      card.appendChild(el("p", "card-note", options.note));
+    }
 
     // Bottom row: votes
     var bottom = el("div", "card-bottom");
@@ -136,8 +160,22 @@ var UI = (function () {
     return Store.voteCount(b) - Store.voteCount(a) || sortByNewest(a, b);
   }
 
+  // PBI-07 (Sprint 3): lecturer priority – unhandled questions first,
+  // answered questions sink to the bottom; most votes first inside each status.
+  function sortByPriority(a, b) {
+    return Store.STATUSES.indexOf(a.status) - Store.STATUSES.indexOf(b.status) || sortByVotes(a, b);
+  }
+
+  // Short version of a question for messages, e.g. "How many story points…"
+  function shortText(question) {
+    return question.text.length > 60 ? question.text.slice(0, 57) + "…" : question.text;
+  }
+
   return {
     STATUS_INFO: STATUS_INFO,
+    el: el,
+    shortText: shortText,
+    sortByPriority: sortByPriority,
     clear: clear,
     authorText: authorText,
     createStatusLabel: createStatusLabel,

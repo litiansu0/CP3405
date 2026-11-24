@@ -482,3 +482,171 @@ select:focus-visible {
 h1[tabindex="-1"]:focus {
   outline: none;
 }
+
+/* ===================== Sprint 3: moderation, duplicates, status notices ===================== */
+
+/* Lecturer action buttons on cards */
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.btn-small {
+  padding: 6px 12px;
+  font-size: 0.95rem;
+}
+
+.btn-danger {
+  background: #fff;
+  color: var(--error);
+  border-color: var(--error);
+}
+
+.btn-danger:hover {
+  background: #fdecea;
+}
+
+/* Programmatic focus targets (cards, headings) after an action */
+.question-card:focus,
+h2[tabindex="-1"]:focus {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Result of the last lecturer action */
+.action-status {
+  margin: 0 0 20px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  background: var(--success-bg);
+  color: var(--success-text);
+  border-left: 4px solid var(--success-text);
+  font-weight: 600;
+}
+
+.action-status:empty {
+  display: none;
+}
+
+/* PBI-08: moderation tags and notes */
+.tag-removed {
+  background: #e2e8f0;
+  color: var(--text);
+  border: 1px dashed var(--muted);
+}
+
+.card-note {
+  margin: 0 0 10px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: var(--bg);
+  border-left: 4px solid var(--muted);
+}
+
+/* PBI-08: possible duplicates */
+.dup-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dup-pair {
+  border: 2px solid var(--gold);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+
+.dup-match {
+  margin: 0 0 10px;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.dup-question {
+  border-left: 4px solid var(--border);
+  padding: 4px 0 4px 12px;
+  margin-bottom: 10px;
+}
+
+.dup-question .question-meta {
+  margin: 0;
+}
+
+.dup-letter {
+  font-weight: 700;
+}
+
+/* Sprint 2 retrospective: clearer status changes for students */
+.tag-updated {
+  background: #1f4b7a;
+  color: #fff;
+}
+
+.card-updated {
+  border: 2px solid var(--gold);
+  background: #fffbea;
+  animation: card-flash 1.2s ease-out 2;
+}
+
+@keyframes card-flash {
+  0%   { box-shadow: 0 0 0 6px rgba(242, 183, 5, 0.6); }
+  100% { box-shadow: 0 0 0 0 rgba(242, 183, 5, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-updated {
+    animation: none;
+  }
+}
+
+/* Pop-up notice (student page) */
+.notice {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  z-index: 10;
+  max-width: 728px;
+  margin: 0 auto;
+}
+
+.notice-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: var(--navy);
+  color: #fff;
+  border-left: 6px solid var(--gold);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  font-weight: 600;
+}
+
+.notice-close {
+  font: inherit;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 6px;
+  border: 2px solid #fff;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+
+.notice-close:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* Leave room at the bottom so the notice never covers the last card */
+body:has(.notice-box) main {
+  padding-bottom: 140px;
+}

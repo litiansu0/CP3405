@@ -8,6 +8,7 @@ var Store = (function () {
   var SESSION_KEY = "jcuqa.session";
   var LECTURER_KEY = "jcuqa.lecturerSeminar";
   var DEMO_FLAG_KEY = "jcuqa.demoSeeded";
+  var KEPT_PAIRS_KEY = "jcuqa.keptPairs";
   var MAX_QUESTION_LENGTH = 300;
 
   // PBI-06: the three question statuses, in workflow order.
@@ -90,6 +91,19 @@ var Store = (function () {
     if (!Array.isArray(q.voters)) {
       q.voters = [];
     }
+    // Sprint 3: moderation fields.
+    if (typeof q.hidden !== "boolean") {
+      q.hidden = false;
+    }
+    if (!q.mergedInto) {
+      q.mergedInto = null;
+    }
+    if (!Array.isArray(q.mergedFrom)) {
+      q.mergedFrom = [];
+    }
+    if (!q.statusChangedAt) {
+      q.statusChangedAt = q.createdAt;
+    }
     return q;
   }
 
@@ -127,7 +141,11 @@ var Store = (function () {
       studentId: session.studentId,
       createdAt: Date.now(),
       status: "submitted", // PBI-06: every new question starts as Submitted
-      voters: []           // PBI-05: student ids that upvoted this question
+      statusChangedAt: Date.now(),
+      voters: [],          // PBI-05: student ids that upvoted this question
+      hidden: false,       // PBI-08: hidden by the lecturer
+      mergedInto: null,    // PBI-08: id of the question this one was merged into
+      mergedFrom: []       // PBI-08: ids of duplicates merged into this one
     };
 
     var list = loadQuestions();
@@ -154,18 +172,30 @@ var Store = (function () {
     return question.voters.indexOf(studentId) !== -1;
   }
 
+  function findIn(list, questionId) {
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].id === questionId) {
+        return list[i];
+      }
+    }
+    return null;
+  }
+
+  // PBI-08: a question students can see = not hidden and not merged away.
+  function isVisible(question) {
+    return !question.hidden && !question.mergedInto;
+  }
+
   // PBI-05: upvote, or undo the upvote if the student already voted.
   // One vote per student; students cannot upvote their own question.
   function toggleVote(session, questionId) {
     var list = loadQuestions();
-    var question = null;
-    for (var i = 0; i < list.length; i++) {
-      if (list[i].id === questionId) {
-        question = list[i];
-      }
-    }
+    var question = findIn(list, questionId);
     if (!question) {
       return { ok: false, error: "This question no longer exists." };
+    }
+    if (!isVisible(question)) {
+      return { ok: false, error: "This question is no longer open for votes." };
     }
     if (question.studentId === session.studentId) {
       return { ok: false, error: "You cannot upvote your own question." };
@@ -181,11 +211,95 @@ var Store = (function () {
     return { ok: true, voted: index === -1 };
   }
 
+  // ---------- Sprint 3: lecturer moderation ----------
+
+  // Load, change one question, save. Used by all lecturer actions.
+  function updateQuestion(questionId, change) {
+    var list = loadQuestions();
+    var question = findIn(list, questionId);
+    if (!question) {
+      return { ok: false, error: "This question no longer exists." };
+    }
+    change(question);
+    saveQuestions(list);
+    return { ok: true, question: question };
+  }
+
+  // PBI-06: lecturer marks a question Seen / Answered (or reopens it).
+  function setStatus(questionId, status) {
+    if (STATUSES.indexOf(status) === -1) {
+      return { ok: false, error: "Unknown status." };
+    }
+    return updateQuestion(questionId, function (q) {
+      q.status = status;
+      q.statusChangedAt = Date.now();
+    });
+  }
+
+  // PBI-08: hide an inappropriate / irrelevant question, or restore it.
+  function setHidden(questionId, hidden) {
+    return updateQuestion(questionId, function (q) {
+      q.hidden = !!hidden;
+    });
+  }
+
+  // PBI-08: merge a duplicate into the question the lecturer keeps.
+  // Votes are combined (each student counted once). The student who asked
+  // the duplicate counts as a supporter of the kept question.
+  function mergeQuestions(keepId, duplicateId) {
+    var list = loadQuestions();
+    var keep = findIn(list, keepId);
+    var duplicate = findIn(list, duplicateId);
+    if (!keep || !duplicate || keepId === duplicateId) {
+      return { ok: false, error: "These questions cannot be merged." };
+    }
+    if (!isVisible(keep) || !isVisible(duplicate)) {
+      return { ok: false, error: "Only visible questions can be merged." };
+    }
+
+    duplicate.voters.concat([duplicate.studentId]).forEach(function (id) {
+      if (id !== keep.studentId && keep.voters.indexOf(id) === -1) {
+        keep.voters.push(id);
+      }
+    });
+    keep.mergedFrom.push(duplicate.id);
+    duplicate.mergedInto = keep.id;
+    saveQuestions(list);
+    return { ok: true, question: keep };
+  }
+
+  // PBI-08: pairs the lecturer decided are NOT duplicates ("keep both").
+  function pairKey(idA, idB) {
+    return [idA, idB].sort().join("|");
+  }
+
+  function loadKeptPairs() {
+    try {
+      var list = JSON.parse(localStorage.getItem(KEPT_PAIRS_KEY));
+      return Array.isArray(list) ? list : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function keepBoth(idA, idB) {
+    var list = loadKeptPairs();
+    var key = pairKey(idA, idB);
+    if (list.indexOf(key) === -1) {
+      list.push(key);
+      localStorage.setItem(KEPT_PAIRS_KEY, JSON.stringify(list));
+    }
+  }
+
+  function isKeptPair(idA, idB) {
+    return loadKeptPairs().indexOf(pairKey(idA, idB)) !== -1;
+  }
+
   // Sprint 2: live update. The browser fires "storage" in OTHER tabs
   // whenever localStorage changes, so every open page can re-render.
   function onQuestionsChange(callback) {
     window.addEventListener("storage", function (event) {
-      if (event.key === QUESTIONS_KEY || event.key === null) {
+      if (event.key === QUESTIONS_KEY || event.key === KEPT_PAIRS_KEY || event.key === null) {
         callback();
       }
     });
@@ -246,6 +360,13 @@ var Store = (function () {
     voteCount: voteCount,
     hasVoted: hasVoted,
     toggleVote: toggleVote,
+    isVisible: isVisible,
+    setStatus: setStatus,
+    setHidden: setHidden,
+    mergeQuestions: mergeQuestions,
+    pairKey: pairKey,
+    keepBoth: keepBoth,
+    isKeptPair: isKeptPair,
     onQuestionsChange: onQuestionsChange,
     ensureDemoData: ensureDemoData
   };
