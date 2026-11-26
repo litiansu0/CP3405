@@ -344,6 +344,15 @@ var Store = (function () {
     localStorage.setItem(DEMO_FLAG_KEY, "yes");
   }
 
+  // Sprint 4: demo support – remove everything and add the example questions again.
+  // Student sessions (sessionStorage) are kept, so open tabs keep working.
+  function resetDemoData() {
+    localStorage.removeItem(QUESTIONS_KEY);
+    localStorage.removeItem(KEPT_PAIRS_KEY);
+    localStorage.removeItem(DEMO_FLAG_KEY);
+    ensureDemoData();
+  }
+
   return {
     MAX_QUESTION_LENGTH: MAX_QUESTION_LENGTH,
     STATUSES: STATUSES,
@@ -368,6 +377,7 @@ var Store = (function () {
     keepBoth: keepBoth,
     isKeptPair: isKeptPair,
     onQuestionsChange: onQuestionsChange,
-    ensureDemoData: ensureDemoData
+    ensureDemoData: ensureDemoData,
+    resetDemoData: resetDemoData
   };
 })();

@@ -23,6 +23,7 @@
   var dupEmpty = document.getElementById("dup-empty");
   var dupCount = document.getElementById("dup-count");
   var dupHeading = document.getElementById("dup-heading");
+  var resetButton = document.getElementById("reset-demo");
 
   var seminar = null;
   var knownIds = {};
@@ -301,7 +302,7 @@
     if (code === "") {
       codeError.textContent = "Please enter a class code.";
     } else if (!openSeminar(code)) {
-      codeError.textContent = "Class code \"" + code + "\" was not found.";
+      codeError.textContent = "Class code \"" + code + "\" was not found. Check the code and try again.";
     } else {
       codeError.textContent = "";
       dashboardTitle.setAttribute("tabindex", "-1");
@@ -327,6 +328,23 @@
   });
 
   filterSelect.addEventListener("change", render);
+
+  // Sprint 4: demo support only – put the example questions back before a demo.
+  resetButton.addEventListener("click", function () {
+    if (!window.confirm("Reset ALL demo data?\n\nEvery question, vote and moderation action is removed " +
+        "and the 6 example questions are added again.")) {
+      return;
+    }
+    Store.resetDemoData();
+    knownIds = {};
+    Store.getQuestions(seminar.code).forEach(function (q) {
+      knownIds[q.id] = true;
+    });
+    filterSelect.value = "all";
+    announce("Demo data reset. Open student tabs update automatically.");
+    render();
+    focusElement(dashboardTitle);
+  });
 
   // Live update when students ask or vote in other tabs.
   Store.onQuestionsChange(render);

@@ -45,7 +45,6 @@
   // Sprint 3: id -> time until which the card stays highlighted.
   var highlightUntil = {};
   var HIGHLIGHT_MS = 8000;
-  var noticeTimer = null;
 
   function stateOf(q) {
     return { status: q.status, hidden: q.hidden, mergedInto: q.mergedInto };
@@ -78,17 +77,21 @@
     var box = UI.el("div", "notice-box");
     box.appendChild(UI.el("span", "", text));
     var close = UI.el("button", "notice-close", "Dismiss");
+    close.setAttribute("aria-label", "Dismiss notice");
     close.type = "button";
     close.addEventListener("click", function () {
       UI.clear(notice);
     });
     box.appendChild(close);
     notice.appendChild(box);
-    clearTimeout(noticeTimer);
-    noticeTimer = setTimeout(function () {
-      UI.clear(notice);
-    }, 12000);
+    // Sprint 4: the notice stays until dismissed (no time limit), Esc also closes it.
   }
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+      UI.clear(notice);
+    }
+  });
 
   // Compare with the last known state: highlight changed cards and
   // tell the student when one of THEIR questions changed.

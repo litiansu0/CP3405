@@ -100,7 +100,7 @@ h2 {
 }
 
 .small {
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 
 /* Forms */
@@ -344,7 +344,7 @@ select:focus-visible {
 
 .legend-text {
   color: var(--muted);
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 
 /* PBI-04: shared question card */
@@ -397,7 +397,7 @@ select:focus-visible {
 .question-meta {
   margin: 0 0 10px;
   color: var(--muted);
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 
 .card-bottom {
@@ -649,4 +649,36 @@ h2[tabindex="-1"]:focus {
 /* Leave room at the bottom so the notice never covers the last card */
 body:has(.notice-box) main {
   padding-bottom: 140px;
+}
+
+/* ===================== Sprint 4: validation fixes ===================== */
+
+/* Focus ring must be visible on the navy header (blue on navy was too weak) */
+.site-header a:focus-visible {
+  outline-color: var(--gold);
+}
+
+/* Demo tools section on the lecturer dashboard */
+.demo-tools {
+  border-style: dashed;
+}
+
+/* High-contrast mode (Windows "Contrast themes"): backgrounds are removed,
+   so tags and badges get a border to keep their shape. */
+@media (forced-colors: active) {
+  .tag,
+  .badge,
+  .count-pill,
+  .stat,
+  .notice-box {
+    border: 1px solid CanvasText;
+  }
+
+  .vote-btn[aria-pressed="true"] {
+    border-width: 4px;
+  }
+
+  .card-updated {
+    border-width: 4px;
+  }
 }
